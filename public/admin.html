@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080a12">
+  <title>V Spark | Control Room</title>
+  <link rel="stylesheet" href="/admin.css">
+  <script defer src="/admin.js"></script>
+</head>
+<body class="admin-theme">
+  <main id="admin-login-shell" class="login-shell">
+    <div class="login-art" aria-hidden="true"><span>VS</span><i></i><b>18.11.26</b></div>
+    <section class="login-card">
+      <a class="admin-brand" href="/"><span>V<span>✦</span>SPARK</span><small>EVENT CONTROL SYSTEM</small></a>
+      <p class="eyebrow">AUTHORIZED PERSONNEL ONLY</p>
+      <h1>ENTER THE<br><em>CONTROL ROOM</em></h1>
+      <p class="login-copy">Manage the arena, matches, and event settings from one place.</p>
+      <form id="admin-login-form" class="stack-form">
+        <label>ADMIN USERNAME<input name="username" autocomplete="username" placeholder="Username" required></label>
+        <label>PASSWORD<input name="password" type="password" autocomplete="current-password" placeholder="Password" required></label>
+        <p id="admin-error" class="form-error" aria-live="polite"></p>
+        <button class="neon-button" type="submit">ACCESS CONTROL ROOM <span>↗</span></button>
+      </form>
+      <a class="back-link" href="/">← Back to V Spark</a>
+    </section>
+  </main>
+
+  <div id="admin-app" class="admin-layout" hidden>
+    <aside class="sidebar">
+      <a class="admin-brand" href="/"><span>V<span>✦</span>SPARK</span><small>CONTROL ROOM <b>● LIVE</b></small></a>
+      <div class="side-label">EVENT MANAGEMENT</div>
+      <nav class="side-nav" aria-label="Admin sections">
+        <button class="active" data-page="overview"><span>◈</span> Overview</button>
+        <button data-page="settings"><span>⚙</span> Event settings</button>
+        <button data-page="games"><span>▣</span> Games & capacity</button>
+        <button data-page="matches"><span>◷</span> Matches & results</button>
+        <button data-page="registrations"><span>▤</span> Registrations</button>
+        <button data-page="admins"><span>♙</span> Admin accounts</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="system-status"><i></i><span>DATABASE CONNECTED<small>SECURE SESSION ACTIVE</small></span></div><a href="/" class="public-link">↗ View public event site</a></div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="topbar">
+        <div><p class="eyebrow">V SPARK · EVENT OPERATIONS</p><h1 id="page-title">Overview</h1></div>
+        <div class="top-actions"><span class="operator"><i>✦</i><span id="operator-name">ADMIN<small>EVENT ADMINISTRATOR</small></span></span><button class="quiet-button" id="admin-logout">Sign out <span>↗</span></button></div>
+      </header>
+
+      <section class="admin-page" data-view="overview">
+        <div class="welcome-banner"><div><p class="eyebrow">CONTROL ROOM READY</p><h2>THE ARENA IS <em>YOURS.</em></h2><p>Event operations at a glance. Keep every match moving.</p></div><div class="banner-date"><small>EVENT DATE</small><b id="overview-date">18 NOV 2026</b><small id="overview-location">COMSATS VEHARI CAMPUS</small></div></div>
+        <div class="metric-grid" id="stats"></div>
+        <div class="overview-grid"><section class="panel"><div class="panel-heading"><div><p class="eyebrow">LIVE CAPACITY</p><h2>Registrations by game</h2></div><button class="text-button" data-goto="games">Manage games ↗</button></div><div id="game-stats" class="game-stats"></div></section><section class="panel"><div class="panel-heading"><div><p class="eyebrow">UP NEXT</p><h2>Match timeline</h2></div><button class="text-button" data-goto="matches">View matches ↗</button></div><div id="up-next" class="up-next"></div></section></div>
+      </section>
+
+      <section class="admin-page" data-view="settings" hidden><div class="section-intro"><p class="eyebrow">EVENT CONFIGURATION</p><h2>Event <em>settings</em></h2><p>Update the public event details. Changes appear on the event site immediately.</p></div><section class="panel form-panel"><form id="settings-form" class="settings-grid"><label>EVENT DATE<input type="date" name="event_date" required></label><label>VENUE / ROOM<input name="venue" maxlength="160" required placeholder="To be announced"></label><label class="full-field">UNIVERSITY NAME<input name="university_name" maxlength="180" required></label><div class="form-actions full-field"><span>These details are shown on the public site.</span><button class="neon-button">SAVE EVENT SETTINGS <span>↗</span></button></div></form></section></section>
+
+      <section class="admin-page" data-view="games" hidden><div class="section-intro"><p class="eyebrow">ARENA CONFIGURATION</p><h2>Games & <em>capacity</em></h2><p>Set each game’s public name, details, registration limit, and match format.</p></div><div id="games" class="admin-game-list"></div></section>
+
+      <section class="admin-page" data-view="matches" hidden><div class="section-intro"><p class="eyebrow">COMPETITION CONTROL</p><h2>Matches & <em>results</em></h2><p>Place registered players, set the schedule, control live matches, and record winners.</p></div><section class="panel match-create"><div class="panel-heading"><div><p class="eyebrow">NEW SCHEDULE SLOT</p><h2>Create a match</h2></div><span class="limit-chip" id="player-limit">SELECT A GAME</span></div><form id="match-form"><div class="match-fields"><label>GAME<select name="game_id" id="match-game" required></select></label><label>MATCH LABEL<input name="label" required maxlength="80" placeholder="Example: Tekken semifinal 1"></label><label>START TIME<input name="starts_at" type="datetime-local" required></label><label>DURATION (MINUTES)<input name="duration_minutes" type="number" min="1" max="1440" required placeholder="45"></label></div><div class="roster-heading"><div><h3>Assign registered players</h3><p id="roster-hint">Choose a game to load its active registrations.</p></div><span id="selected-count">0 selected</span></div><div id="registered-roster" class="roster-list"><p class="empty-state">Select a game to see its roster.</p></div><div class="form-actions"><span>Overlapping matches are allowed; player time conflicts are blocked.</span><button class="neon-button">CREATE MATCH <span>↗</span></button></div></form><div id="overlap-note" class="overlap-note" hidden></div></section><section class="panel match-list-panel"><div class="panel-heading"><div><p class="eyebrow">SCHEDULE CONTROL</p><h2>All matches</h2></div><div class="match-filters"><button class="filter-chip active" data-match-filter="All">All</button><button class="filter-chip" data-match-filter="Upcoming">Upcoming</button><button class="filter-chip" data-match-filter="Live">Live</button><button class="filter-chip" data-match-filter="Completed">Completed</button></div></div><div id="matches" class="match-list"></div></section></section>
+
+      <section class="admin-page" data-view="registrations" hidden><div class="section-intro"><p class="eyebrow">PLAYER ROSTER</p><h2>Event <em>registrations</em></h2><p>Search players and filter the roster by game or department.</p></div><section class="panel"><div class="table-toolbar"><input id="search" type="search" placeholder="Search name, phone, or email"><select id="filter-game"><option value="">All games</option></select><select id="filter-dept"><option value="">All departments</option></select><button class="outline-button" id="csv">↓ Export CSV</button></div><div id="registrations" class="table-wrap"></div></section></section>
+
+      <section class="admin-page" data-view="admins" hidden><div class="section-intro"><p class="eyebrow">ACCESS CONTROL</p><h2>Admin <em>accounts</em></h2><p>Add another trusted event administrator or remove an account. You cannot remove your own account.</p></div><div class="admin-management-grid"><section class="panel"><div class="panel-heading"><div><p class="eyebrow">GRANT ACCESS</p><h2>Add an administrator</h2></div></div><form id="add-admin" class="stack-form"><label>USERNAME<input name="username" required minlength="3" maxlength="40" placeholder="e.g. event.operator"></label><label>PASSWORD<input name="password" type="password" required minlength="8" placeholder="At least 8 characters"></label><button class="neon-button">ADD ADMIN <span>↗</span></button></form></section><section class="panel"><div class="panel-heading"><div><p class="eyebrow">AUTHORIZED USERS</p><h2>Admin directory</h2></div><span class="limit-chip" id="admin-count">0 ACCOUNTS</span></div><div id="admins" class="admin-directory"></div></section></div></section>
+
+      <footer class="admin-footer"><span>V SPARK CONTROL ROOM <i>●</i> SECURE OPERATIONS</span><span>COMSATS UNIVERSITY · VEHARI CAMPUS</span></footer>
+    </main>
+  </div>
+
+  <dialog id="match-dialog" class="admin-dialog"><button class="dialog-close" data-close aria-label="Close">×</button><div id="match-dialog-content"></div></dialog>
+  <div id="toast" class="admin-toast" role="status" aria-live="polite"></div>
+</body>
+</html>

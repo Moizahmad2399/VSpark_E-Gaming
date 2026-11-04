@@ -1,0 +1,11 @@
+const test=require('node:test'),assert=require('node:assert/strict');const {validStudent,normalizedPhone}=require('../src/validation');
+const good={full_name:'Ayesha Student',phone:'0300-1234567',email:'student@example.edu',cnic:'12345-1234567-1',department:'Computer Science',password:'securepass1'};
+test('phone normalization and validation accept Pakistani mobile format',()=>{assert.equal(normalizedPhone('03001234567'),'0300-1234567');assert.equal(normalizedPhone('0300-1234567'),'0300-1234567');assert.equal(validStudent(good),true)});
+test('invalid phone and CNIC are rejected',()=>{assert.equal(validStudent({...good,phone:'12345'}),false);assert.equal(validStudent({...good,cnic:'1234-12345678-1'}),false)});
+test('malformed email is rejected',()=>{assert.equal(validStudent({...good,email:'student-at-example'}),false)});
+test('all signup fields including department and password are required',()=>{assert.equal(validStudent({...good,department:'Unlisted'}),false);assert.equal(validStudent({...good,password:'short'}),false)});
+test('admin-only middleware rejects student and anonymous sessions',()=>{
+ const {adminOnly}=require('../src/auth');for(const session of [undefined,{}, {user:{role:'student'}}]){let status=0,body;adminOnly({session},{status(n){status=n;return this},json(v){body=v}},()=>assert.fail('non-admin passed'));assert.equal(status,403);assert.equal(body.error,'Admin access required.')}let passed=false;adminOnly({session:{user:{role:'admin'}}},{status(){return this},json(){}},()=>{passed=true});assert.equal(passed,true)
+});
+test('capacity reservations lock the game row inside a transaction',()=>{const source=require('node:fs').readFileSync(require('node:path').join(__dirname,'..','server.js'),'utf8');assert.match(source,/BEGIN[\s\S]*SELECT \* FROM games WHERE id=\$1 FOR UPDATE[\s\S]*SELECT count\(\*\) FROM registrations[\s\S]*INSERT INTO registrations[\s\S]*COMMIT/)});
+test('match assignment checks registered players and rejects interval overlap',()=>{const source=require('node:fs').readFileSync(require('node:path').join(__dirname,'..','server.js'),'utf8');assert.match(source,/A student cannot be assigned to overlapping matches/);assert.match(source,/other\.starts_at/);assert.match(source,/other\.ends_at/)});

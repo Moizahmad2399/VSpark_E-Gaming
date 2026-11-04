@@ -1,0 +1,4 @@
+const departments = ['Computer Science','Software Engineering','Artificial Intelligence','Data Science','Electrical Engineering','Mechanical Engineering','Civil Engineering','BBA','BS Accounting & Finance','BS Economics','BS English','BS Psychology','BS Mathematics','BS Physics','BS Chemistry','Other'];
+function normalizedPhone(v) { const d=String(v||'').replace(/\D/g,''); return d.length===11 ? `${d.slice(0,4)}-${d.slice(4)}` : ''; }
+function validStudent(v) { return v && String(v.full_name||'').trim().length>=2 && /^03\d{2}-\d{7}$/.test(normalizedPhone(v.phone)) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v.email||'')) && /^\d{5}-\d{7}-\d$/.test(v.cnic||'') && departments.includes(v.department) && String(v.password||'').length>=8; }
+module.exports={departments,normalizedPhone,validStudent};
