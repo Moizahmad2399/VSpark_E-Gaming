@@ -22,7 +22,7 @@ async function findFreePort(from) {
 async function startExpress(port) {
   const app = require('../server.js');
   const db = require('../src/db');
-  const server = app.listen(port, '127.0.0.1', () => {
+  const server = app.listen(port, '0.0.0.0', () => {
     console.log(`V Spark is ready at http://localhost:${port}`);
   });
   server.on('error', (error) => {
