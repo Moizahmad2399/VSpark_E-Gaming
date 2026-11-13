@@ -24,10 +24,6 @@ const profileSummary = document.createElement('div');
 profileSummary.id = 'profile-summary';
 profileSummary.className = 'profile-summary';
 dashboardTitle.insertAdjacentElement('afterend', profileSummary);
-const registrationsHeading = document.createElement('p');
-registrationsHeading.className = 'eyebrow registrations-heading';
-registrationsHeading.textContent = 'MY REGISTRATIONS';
-$('#my-registrations').before(registrationsHeading);
 
 function setStudentNavigation(signedIn) {
   document.querySelectorAll('.site-nav > div [data-open]').forEach(button => { button.hidden = signedIn; });
@@ -154,14 +150,14 @@ async function loadMe() {
     setStudentNavigation(true);
     const profile = player.profile || { full_name: player.name };
     const initials=String(profile.full_name||'Player').split(/\s+/).slice(0,2).map(part=>part[0]||'').join('').toUpperCase();
-    profileSummary.innerHTML = `<div class="profile-identity">${profile.has_avatar?'<img class="profile-avatar" src="/api/me/avatar" alt="Profile photo">':`<span class="profile-avatar avatar-placeholder">${esc(initials)}</span>`}<label class="avatar-upload">CHANGE PHOTO<input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp"><small id="avatar-file-name">JPG, PNG or WebP · up to 2 MB</small><button id="avatar-upload-button" class="primary avatar-upload-button" type="button" disabled>UPLOAD PHOTO</button></label></div><div><small>FULL NAME</small><b>${esc(profile.full_name)}</b></div><div><small>PHONE</small><b>${esc(profile.phone)}</b></div><div><small>EMAIL</small><b>${esc(profile.email)}</b></div><div><small>DEPARTMENT</small><b>${esc(profile.department)}</b></div>`;
+    profileSummary.innerHTML = `<div class="profile-identity">${profile.has_avatar?'<img class="profile-avatar" src="/api/me/avatar" alt="Profile photo">':`<span class="profile-avatar avatar-placeholder">${esc(initials)}</span>`}<label class="avatar-upload">CHANGE PHOTO<input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp"><small id="avatar-file-name">JPG, PNG or WebP · up to 2 MB</small><button id="avatar-upload-button" class="primary avatar-upload-button" type="button" disabled>UPLOAD PHOTO</button><small id="avatar-status" class="avatar-status" role="status" aria-live="polite"></small></label></div><div><small>FULL NAME</small><b>${esc(profile.full_name)}</b></div><div><small>PHONE</small><b>${esc(profile.phone)}</b></div><div><small>EMAIL</small><b>${esc(profile.email)}</b></div><div><small>DEPARTMENT</small><b>${esc(profile.department)}</b></div>`;
     $('#avatar-file').addEventListener('change',event=>{const file=event.currentTarget.files[0];$('#avatar-file-name').textContent=file?file.name:'JPG, PNG or WebP · up to 2 MB';$('#avatar-upload-button').disabled=!file});
-    $('#avatar-upload-button').addEventListener('click',async()=>{const file=$('#avatar-file').files[0];if(!file)return;if(file.size>2*1024*1024){toast('Photo must be 2 MB or smaller.');return}const button=$('#avatar-upload-button');button.disabled=true;button.textContent='UPLOADING…';try{await api('/api/me/avatar',{method:'PUT',body:file,headers:{'Content-Type':file.type}});toast('Profile photo saved.');await loadMe()}catch(error){toast(error.message);button.disabled=false;button.textContent='UPLOAD PHOTO'}});
+    $('#avatar-upload-button').addEventListener('click',async()=>{const file=$('#avatar-file').files[0];if(!file)return;const status=$('#avatar-status');if(file.size>2*1024*1024){status.textContent='Photo must be 2 MB or smaller.';return}const button=$('#avatar-upload-button');button.disabled=true;button.textContent='UPLOADING…';status.textContent='Saving your photo…';try{await api('/api/me/avatar',{method:'PUT',body:file,headers:{'Content-Type':file.type}});await loadMe();$('#avatar-status').textContent='Photo saved to your profile.'}catch(error){status.textContent=error.message||'Upload failed. Please try again.';button.disabled=false;button.textContent='UPLOAD PHOTO'}});
     const registrations = $('#my-registrations');
     registrations.innerHTML = player.registrations.length
       ? player.registrations.map(registration => `<div class="registration-row"><span><b>${esc(registration.game)}</b><br><small>${esc(registration.status)} · ${registration.starts_at ? new Date(registration.starts_at).toLocaleString() : 'Match time pending'}${registration.result ? ` · ${esc(registration.result)}` : ''}</small></span>${registration.status === 'Registered' && registration.match_status !== 'Live' ? `<button data-cancel="${registration.id}">CANCEL</button>` : ''}</div>`).join('')
       : '<p>No registrations yet. Choose a game to claim a spot.</p><button class="primary" data-browse-games>BROWSE GAMES ↗</button>';
-    $('#dashboard-dialog').showModal();
+    if (!$('#dashboard-dialog').open) $('#dashboard-dialog').showModal();
     const browseGames = $('[data-browse-games]', registrations);
     if (browseGames) browseGames.addEventListener('click', () => {
       $('#dashboard-dialog').close();
