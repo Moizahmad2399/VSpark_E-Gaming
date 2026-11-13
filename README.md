@@ -26,13 +26,20 @@ The local development database is convenient for this computer. Production and s
 
 Students can upload a JPG, PNG, or WebP profile photo (maximum 2 MB) from **My Profile**. Images are validated by file signature and stored as PostgreSQL `BYTEA` data. The student profile uses a private authenticated image route; the public winners board only serves the photo of a completed-match winner. The columns are included in `schema.sql`; when updating an existing database, run the latest `schema.sql` in the Supabase SQL editor before starting the updated app.
 
-## Render deploy
+## Deploy to Vercel + Supabase
 
-Create a Render Web Service from this repository, set the build command to `npm install` and start command to `npm start`. Add `DATABASE_URL`, `SESSION_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `NODE_ENV=production` under the service's environment settings. Run the schema in Supabase and run `npm run seed` once against the production database (for example, from the Render shell). Render terminates HTTPS; production cookies are marked Secure.
+1. Create a Supabase project. In the project SQL Editor, run the current `schema.sql`.
+2. In Supabase, select **Connect → Transaction pooler** and copy its URI. This is the connection type intended for serverless functions. Keep the database password private.
+3. Import this GitHub repository into Vercel. Vercel detects the exported Express app in `server.js`; keep the project root at the repository root. The `public/` folder is served as static assets, and `cleanUrls` keeps `/admin` working.
+4. In Vercel **Project → Settings → Environment Variables**, add `DATABASE_URL` (the Supabase transaction pooler URI), `SESSION_SECRET` (a long random value), `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `NODE_ENV=production`. Apply them to Production and Preview as needed. Never put the database URL or admin password in frontend code or commit them.
+5. Deploy. Check `<your-vercel-domain>/health` and `<your-vercel-domain>/api/public`.
+6. Seed the admin and games once using the same `DATABASE_URL`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD` in a private local `.env`, then run `npm run seed`. The seed script applies `schema.sql` idempotently before inserting the games and bcrypt-hashed admin. Remove the temporary local `.env` only if you no longer need it; it is gitignored.
+
+For local seeding against Supabase, use the pooler URI exactly as copied from its dashboard. For Vercel, the app uses one `pg` connection per warm function instance to avoid opening excessive database connections.
 
 ## Environment variables
 
-`DATABASE_URL` is required for Supabase/production and optional for local `npm start` (without it, the local persistent database starts automatically). `SESSION_SECRET` is required for deployment, `ADMIN_USERNAME` and `ADMIN_PASSWORD` are required for seeding, `PORT` is supplied by Render, and `NODE_ENV` controls production settings.
+`DATABASE_URL` is required for Supabase/production and optional for local `npm start` (without it, the local persistent database starts automatically). `SESSION_SECRET` is required for deployment, `ADMIN_USERNAME` and `ADMIN_PASSWORD` are required for seeding, `PORT` is supplied by the host, and `NODE_ENV` controls production settings.
 
 ## Tests
 
