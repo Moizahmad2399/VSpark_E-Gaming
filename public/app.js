@@ -153,7 +153,9 @@ async function loadMe() {
     const player = await api('/api/me');
     setStudentNavigation(true);
     const profile = player.profile || { full_name: player.name };
-    profileSummary.innerHTML = `<div><small>FULL NAME</small><b>${esc(profile.full_name)}</b></div><div><small>PHONE</small><b>${esc(profile.phone)}</b></div><div><small>EMAIL</small><b>${esc(profile.email)}</b></div><div><small>DEPARTMENT</small><b>${esc(profile.department)}</b></div>`;
+    const initials=String(profile.full_name||'Player').split(/\s+/).slice(0,2).map(part=>part[0]||'').join('').toUpperCase();
+    profileSummary.innerHTML = `<div class="profile-identity">${profile.has_avatar?'<img class="profile-avatar" src="/api/me/avatar" alt="Profile photo">':`<span class="profile-avatar avatar-placeholder">${esc(initials)}</span>`}<label class="avatar-upload">CHANGE PHOTO<input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WebP · up to 2 MB</small></label></div><div><small>FULL NAME</small><b>${esc(profile.full_name)}</b></div><div><small>PHONE</small><b>${esc(profile.phone)}</b></div><div><small>EMAIL</small><b>${esc(profile.email)}</b></div><div><small>DEPARTMENT</small><b>${esc(profile.department)}</b></div>`;
+    $('#avatar-file').addEventListener('change', async event=>{const file=event.currentTarget.files[0];if(!file)return;if(file.size>2*1024*1024){toast('Photo must be 2 MB or smaller.');return}try{await api('/api/me/avatar',{method:'PUT',body:file,headers:{'Content-Type':file.type}});toast('Profile photo saved.');await loadMe()}catch(error){toast(error.message)}});
     const registrations = $('#my-registrations');
     registrations.innerHTML = player.registrations.length
       ? player.registrations.map(registration => `<div class="registration-row"><span><b>${esc(registration.game)}</b><br><small>${esc(registration.status)} · ${registration.starts_at ? new Date(registration.starts_at).toLocaleString() : 'Match time pending'}${registration.result ? ` · ${esc(registration.result)}` : ''}</small></span>${registration.status === 'Registered' && registration.match_status !== 'Live' ? `<button data-cancel="${registration.id}">CANCEL</button>` : ''}</div>`).join('')
@@ -199,7 +201,7 @@ async function load() {
       $('#event-location').textContent = `${data.settings.university_name} · ${data.settings.venue}`;
       $('#footer-university').textContent = data.settings.university_name.toUpperCase();
     }
-    const gamesMarkup = data.games.map((game, index) => `<article class="game-card" data-game-id="${game.id}"><div class="game-bg" style="background-image:linear-gradient(0deg,#080a12 0%,transparent 90%),url('${esc(game.image_path)}')"></div><span class="spots"></span><p class="eyebrow">0${index + 1} / ARENA</p><h3>${esc(game.name)}</h3><p>${esc(game.description)}</p><button data-register="${game.id}"><span>↗</span></button></article>`).join('');
+    const gamesMarkup = data.games.map((game, index) => `<article class="game-card" data-game-id="${game.id}"><img class="game-bg" src="${esc(game.image_path)}" alt="${esc(game.name)} artwork" loading="lazy" decoding="async"><span class="spots"></span><p class="eyebrow">0${index + 1} / ARENA</p><h3>${esc(game.name)}</h3><p>${esc(game.description)}</p><button data-register="${game.id}"><span>↗</span></button></article>`).join('');
     const gameStructure = JSON.stringify(data.games.map(({ id, name, description, image_path }) => ({ id, name, description, image_path })));
     if (gameStructure !== lastGamesMarkup) {
       $('#game-list').innerHTML = gamesMarkup;
@@ -244,15 +246,23 @@ async function load() {
     }
     updateScheduleCountdowns();
     const winnersMarkup = data.winners.length
-      ? data.winners.map(winner => `<article class="winner-card"><small>${esc(winner.game).toUpperCase()}</small><h3>${esc(winner.winner)}</h3><p>V SPARK CHAMPION ✦</p></article>`).join('')
+      ? data.winners.map(winner => `<article class="winner-card">${winner.has_avatar?`<img class="winner-avatar" src="/api/winners/${Number(winner.winner_id)}/avatar" alt="${esc(winner.winner)}" loading="lazy">`:'<span class="winner-avatar avatar-placeholder">✦</span>'}<small>${esc(winner.game).toUpperCase()}</small><h3>${esc(winner.winner)}</h3><p>V SPARK CHAMPION ✦</p></article>`).join('')
       : '<div class="winner-placeholder">WINNERS WILL BE CROWNED HERE <span>✦</span></div>';
     if (winnersMarkup !== lastWinnersMarkup) {
       $('#winner-list').innerHTML = winnersMarkup;
       lastWinnersMarkup = winnersMarkup;
       layoutChanged = true;
     }
-    if (layoutChanged && window.ScrollTrigger) {
-      requestAnimationFrame(() => requestAnimationFrame(() => ScrollTrigger.refresh()));
+    if (layoutChanged && window.gsap && window.ScrollTrigger) {
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.utils.toArray('.game-card').forEach(card => {
+          if (card.dataset.parallaxReady) return;
+          card.dataset.parallaxReady = 'true';
+          gsap.to($('.game-bg', card), { yPercent: -7, ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: .6 } });
+        });
+      }
+      const images = [...document.querySelectorAll('.game-bg')];
+      Promise.allSettled(images.map(image => image.decode ? image.decode() : Promise.resolve())).then(() => requestAnimationFrame(() => ScrollTrigger.refresh()));
     }
   } catch (error) {
     const notice = $('#db-notice');
@@ -271,26 +281,32 @@ function updateScheduleCountdowns() {
 
 $('#enter').addEventListener('click', () => {
   document.body.classList.add('entered');
+  document.body.classList.remove('gate-active');
   $('#gate').classList.add('leave');
   setTimeout(() => $('#gate').remove(), 750);
 });
 let startY = 0;
+document.body.classList.add('gate-active');
+$('#gate').addEventListener('click', event => { if (!event.target.closest('a, button')) $('#enter').click(); });
 $('#gate').addEventListener('touchstart', event => { startY = event.touches[0].clientY; }, { passive: true });
 $('#gate').addEventListener('touchend', event => {
   if (startY - event.changedTouches[0].clientY > 35) $('#enter').click();
 }, { passive: true });
 window.addEventListener('keydown', event => {
-  if (['Enter', ' ', 'ArrowDown'].includes(event.key) && $('#gate')) $('#enter').click();
+  if (['Enter', ' ', 'ArrowDown'].includes(event.key) && $('#gate')) { event.preventDefault(); $('#enter').click(); }
 });
 window.addEventListener('wheel', event => {
-  if ($('#gate') && !document.body.classList.contains('entered') && event.deltaY > 0) $('#enter').click();
-}, { passive: true });
+  if ($('#gate') && !document.body.classList.contains('entered')) {
+    if (event.deltaY > 0) $('#enter').click();
+    event.preventDefault();
+  }
+}, { passive: false });
 window.addEventListener('scroll', () => {
   if (!window.gsap) return;
-  const dots = document.querySelectorAll('.progress-dots i');
+  const dots = document.querySelectorAll('.progress-dots a');
   const sections = [...document.querySelectorAll('.chapter')];
   const index = sections.findIndex(section => section.getBoundingClientRect().top < innerHeight * .45 && section.getBoundingClientRect().bottom > innerHeight * .45);
-  dots.forEach((dot, i) => dot.classList.toggle('active', i === Math.min(4, Math.max(0, index))));
+  dots.forEach((dot, i) => dot.classList.toggle('active', i === Math.min(dots.length - 1, Math.max(0, index))));
 });
 
 window.addEventListener('load', () => {
@@ -307,21 +323,25 @@ window.addEventListener('load', () => {
       }, 100);
     }
   }, 35);
-  if (window.gsap && window.ScrollTrigger) {
+  if (window.gsap && window.ScrollTrigger && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     gsap.registerPlugin(ScrollTrigger);
     gsap.utils.toArray('.chapter').forEach(section => gsap.from(section.querySelectorAll('h2'), {
-      y: 18, opacity: .82, duration: .55, stagger: .05, ease: 'power2.out', immediateRender: false,
-      scrollTrigger: { trigger: section, start: 'top 88%', once: true }
+      y: 26, opacity: .72, duration: .7, stagger: .07, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: section, start: 'top 82%', once: true }
     }));
+    gsap.fromTo('.step-line i', { scaleX: 0 }, { scaleX: 1, ease: 'none', immediateRender: false, scrollTrigger: { trigger: '.steps', start: 'top 75%', end: 'bottom 55%', scrub: true } });
     const nav = $('.site-nav');
-    let lastScrollY = 0;
+    let lastScrollY = 0, navFrame = false;
     window.addEventListener('scroll', () => {
-      const currentY = scrollY;
-      if (currentY > lastScrollY && currentY > 300) nav.classList.add('hidden');
-      else nav.classList.remove('hidden');
-      lastScrollY = currentY;
+      if (navFrame) return;
+      navFrame = true;
+      requestAnimationFrame(() => {
+        const currentY = scrollY;
+        nav.classList.toggle('hidden', currentY > lastScrollY && currentY > 300);
+        lastScrollY = currentY;
+        navFrame = false;
+      });
     }, { passive: true });
-    gsap.to('.step-line i', { width: '100%', scrollTrigger: { trigger: '.steps', start: 'top 70%', end: 'bottom 60%', scrub: true } });
   }
   load().then(() => refreshStudentNavigation());
   setInterval(load, 15000);

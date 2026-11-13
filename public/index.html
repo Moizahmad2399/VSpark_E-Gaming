@@ -1,1 +1,162 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080a12"><title>V Spark – E-Gaming Arena</title><link rel="stylesheet" href="/styles.css"><script defer src="/vendor/gsap.min.js"></script><script defer src="/vendor/ScrollTrigger.min.js"></script><script defer src="/app.js"></script></head><body><div id="preloader"><b>VS</b><div class="load-track"><i id="loadbar"></i></div><small>LOADING ARENA</small></div><script>setTimeout(()=>{const p=document.getElementById("preloader");if(p){p.style.opacity="0";setTimeout(()=>p.remove(),400)}},1800)</script><section class="gate" id="gate"><img src="/assets/images/hero/university.jpg" alt="COMSATS Vehari campus"><div class="gate-shade"></div><a class="brand" href="#top"><span>V<span class="spark">✦</span>SPARK</span><small>E-GAMING ARENA</small></a><div class="gate-copy"><p class="eyebrow">COMSATS UNIVERSITY · VEHARI CAMPUS</p><h1>READY<br>PLAYER <em>ONE?</em></h1><p>One campus. Three arenas. Your moment starts here.</p></div><button class="enter" id="enter">SWIPE TO CONTINUE <span>↓</span></button><div class="gate-foot">18 NOVEMBER 2026 <span>●</span> V SPARK 2026</div></section><div id="db-notice" class="db-notice" hidden></div><header class="site-nav"><a class="brand-small" href="#top">V<span>✦</span>SPARK</a><nav><a href="#games">Games</a><a href="#how">How it works</a><a href="#schedule">Schedule</a></nav><div><button class="outline" data-open="login">LOG IN</button><button class="primary" data-open="signup">JOIN THE ARENA</button><a class="outline admin-link" href="/admin">ADMIN</a></div></header><div class="progress-dots" aria-hidden="true"><i class="active"></i><i></i><i></i><i></i><i></i></div><main id="top"><section class="intro chapter"><div class="intro-grid"><div><p class="eyebrow">THE CAMPUS GOES COMPETITIVE</p><h2>THIS IS YOUR<br><em>ARENA.</em></h2></div><p class="intro-note">The lights are on. The crowd is ready. Step into a day built for bold plays, good rivals, and campus glory.</p></div><div class="event-meta"><div><small>EVENT DATE</small><b id="event-date">18 NOV 2026</b></div><div><small>LOCATION</small><b id="event-location">COMSATS Vehari Campus · To be announced</b></div><div><small>FORMAT</small><b>THREE GAMES · ONE ARENA</b></div></div><div class="scroll-label">SCROLL TO ENTER THE ARENA <span>↓</span></div></section><section class="games chapter" id="games"><div class="section-head"><div><p class="eyebrow">CHOOSE YOUR BATTLE</p><h2>THE <em>GAMES</em></h2></div><p>Find your game. Claim your spot.<br>The rest is history.</p></div><div id="game-list" class="game-list"><article class="game-card"><div class="game-bg placeholder"></div><p class="eyebrow">01 / FIGHTING</p><h3>TEKKEN 3</h3><p>Classic arcade combat. Choose your fighter and enter the arena.</p><button data-open="login">REGISTER NOW <span>↗</span></button></article><article class="game-card"><div class="game-bg placeholder"></div><p class="eyebrow">02 / FOOTBALL</p><h3>FIFA</h3><p>The beautiful game. Edition will be announced soon.</p><button data-open="login">REGISTER NOW <span>↗</span></button></article><article class="game-card"><div class="game-bg placeholder"></div><p class="eyebrow">03 / BATTLE ROYALE</p><h3>PUBG MOBILE</h3><p>Squad up and outlast the competition.</p><button data-open="login">REGISTER NOW <span>↗</span></button></article></div></section><section class="how chapter" id="how"><div class="how-title"><p class="eyebrow">NO COMPLICATED PLAYBOOK</p><h2>FOUR STEPS.<br><em>ALL IN.</em></h2></div><div class="steps"><article><b>01</b><h3>Sign up</h3><p>Create your player profile with your student details.</p></article><article><b>02</b><h3>Pick a game</h3><p>Choose one arena or register for all three.</p></article><article><b>03</b><h3>Get placed</h3><p>Check your dashboard for your assigned match time.</p></article><article><b>04</b><h3>Play & win</h3><p>Show up, bring your best, and make it count.</p></article></div><div class="step-line"><i></i></div></section><section class="schedule chapter" id="schedule"><div class="section-head"><div><p class="eyebrow">THE ARENA TIMELINE</p><h2>LIVE <em>SCHEDULE</em></h2></div><span class="live-pill">● UPDATES LIVE</span></div><div id="schedule-list" class="schedule-list"><p class="empty">Match times will appear here once announced.</p></div></section><section class="winners chapter"><div class="section-head"><div><p class="eyebrow">THE ONES TO BEAT</p><h2>HALL OF <em>WINNERS</em></h2></div></div><div id="winner-list" class="winner-list"><div class="winner-placeholder">WINNERS WILL BE CROWNED HERE <span>✦</span></div></div></section><section class="cta chapter"><p class="eyebrow">YOUR CAMPUS. YOUR GAME.</p><h2>THE NEXT NAME<br>COULD BE <em>YOURS.</em></h2><button class="primary large" data-open="signup">CLAIM YOUR SPOT <span>↗</span></button><footer><span>V SPARK · E-GAMING ARENA</span><span id="footer-university">COMSATS UNIVERSITY ISLAMABAD · VEHARI CAMPUS</span><span>BUILT FOR THE BOLD</span></footer></section></main><dialog id="auth-dialog"><button class="close" aria-label="Close">×</button><div class="auth-switch"><button data-mode="login" class="selected">LOG IN</button><button data-mode="signup">CREATE ACCOUNT</button></div><form id="auth-form"><h2 id="auth-title">WELCOME BACK</h2><div id="auth-fields"></div><p class="form-msg" id="form-msg"></p><button class="primary auth-submit" type="submit">ENTER THE ARENA ↗</button></form></dialog><dialog id="dashboard-dialog"><button class="close" aria-label="Close">×</button><p class="eyebrow">PLAYER PROFILE</p><h2>MY REGISTRATIONS</h2><div id="my-registrations"></div><button class="outline" id="logout">LOG OUT</button></dialog><div id="toast" role="status"></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07090d">
+  <meta name="description" content="V Spark E-Gaming Arena at COMSATS University Islamabad, Vehari Campus — 18 November 2026.">
+  <title>V Spark — E-Gaming Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/vendor/gsap.min.js"></script>
+  <script defer src="/vendor/ScrollTrigger.min.js"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body class="student-site">
+  <div id="preloader" role="status" aria-label="Loading V Spark">
+    <div class="loader-mark">V<span>✦</span>S</div>
+    <div class="load-track"><i id="loadbar"></i></div>
+    <small>SYNCING THE ARENA</small>
+  </div>
+
+  <section class="gate" id="gate" aria-labelledby="gate-title">
+    <img src="/assets/images/hero/university.jpg" alt="COMSATS Vehari campus" fetchpriority="high" decoding="async">
+    <div class="gate-shade" aria-hidden="true"></div>
+    <a class="brand" href="#top" aria-label="V Spark home">
+      <span>V<span class="spark">✦</span>SPARK</span>
+      <small>E-GAMING ARENA</small>
+    </a>
+    <div class="gate-copy">
+      <p class="eyebrow"><span class="eyebrow-mark"></span> COMSATS · VEHARI CAMPUS · 2026</p>
+      <h1 id="gate-title">CAMPUS<br><em>GOES LIVE.</em></h1>
+      <p>One campus. Three arenas. Your moment starts here.</p>
+    </div>
+    <div class="gate-rail" aria-hidden="true"><span>V SPARK / 2026</span><i></i><b>01 — 03</b></div>
+    <button class="enter" id="enter" type="button"><span>ENTER THE ARENA</span><b aria-hidden="true">↓</b></button>
+    <div class="gate-foot"><span>18 NOVEMBER 2026</span><span class="gate-foot-center">VEHARI, PAKISTAN</span><span>SCROLL / TAP TO CONTINUE</span></div>
+  </section>
+
+  <div id="db-notice" class="db-notice" role="status" hidden></div>
+
+  <header class="site-nav">
+    <a class="brand-small" href="#top" aria-label="V Spark home">V<span>✦</span>SPARK<small>ARENA / 2026</small></a>
+    <nav aria-label="Main navigation">
+      <a href="#games">Games <i>01</i></a>
+      <a href="#how">The format <i>02</i></a>
+      <a href="#schedule">Schedule <i>03</i></a>
+      <a href="#winners">Winners <i>04</i></a>
+    </nav>
+    <div class="nav-actions">
+      <button class="outline" data-open="login" type="button">Log in</button>
+      <button class="primary" data-open="signup" type="button">Join the arena <span>↗</span></button>
+      <a class="outline admin-link" href="/admin">Admin <span>↗</span></a>
+    </div>
+  </header>
+
+  <nav class="progress-dots" aria-label="Page chapters">
+    <a href="#top" aria-label="Welcome" class="active"></a>
+    <a href="#games" aria-label="Games"></a>
+    <a href="#how" aria-label="The format"></a>
+    <a href="#schedule" aria-label="Schedule"></a>
+    <a href="#winners" aria-label="Winners"></a>
+    <a href="#join" aria-label="Join"></a>
+  </nav>
+
+  <main id="top">
+    <section class="intro chapter" id="welcome" aria-labelledby="welcome-title">
+      <div class="intro-grid">
+        <div class="intro-heading">
+          <p class="eyebrow"><span class="eyebrow-mark"></span> THE CAMPUS GOES COMPETITIVE</p>
+          <h2 id="welcome-title">THIS IS YOUR<br><em>ARENA.</em></h2>
+        </div>
+        <p class="intro-note">The lights are on. The crowd is ready. Step into a day built for bold plays, good rivals, and campus glory.</p>
+      </div>
+      <div class="arena-collage" aria-label="Featured games at V Spark">
+        <div class="collage-main"><img src="/assets/images/games/pubg.jpg" alt="PUBG Mobile battlefield" loading="lazy" decoding="async"><span>FIELD / 03</span></div>
+        <div class="collage-side"><figure><img src="/assets/images/games/tekken.webp" alt="Tekken fighters" loading="lazy" decoding="async"><figcaption>FIGHT / 01</figcaption></figure><figure><img src="/assets/images/games/fifa.jpg" alt="FIFA football arena" loading="lazy" decoding="async"><figcaption>PLAY / 02</figcaption></figure></div>
+        <div class="collage-orbit">VS<span>✦</span><small>THE CAMPUS<br>IS THE ARENA</small></div>
+        <div class="collage-index">18<span>—</span>11<span>—</span>26</div>
+      </div>
+      <div class="event-meta">
+        <div><small>EVENT DATE</small><b id="event-date">18 NOV 2026</b></div>
+        <div><small>LOCATION</small><b id="event-location">COMSATS University Islamabad, Vehari Campus · To be announced</b></div>
+        <div><small>THE LINEUP</small><b>THREE GAMES <span>·</span> ONE ARENA</b></div>
+      </div>
+      <a class="scroll-label" href="#games"><span>01</span> SCROLL TO ENTER THE ARENA <b aria-hidden="true">↓</b></a>
+      <div class="intro-stamp" aria-hidden="true"><span>VS</span><i>EST. 2026</i></div>
+    </section>
+
+    <section class="games chapter" id="games" aria-labelledby="games-title">
+      <div class="section-head">
+        <div><p class="eyebrow"><span class="eyebrow-mark"></span> CHOOSE YOUR BATTLE / 01</p><h2 id="games-title">THREE WAYS<br>TO <em>GO DOWN.</em></h2></div>
+        <p class="section-copy">Find your game. Claim your spot.<br>The rest is history.</p>
+      </div>
+      <div id="game-list" class="game-list">
+        <article class="game-card game-tekken">
+          <img class="game-bg" src="/assets/images/games/tekken.webp" alt="Tekken 3 arena artwork" loading="lazy" decoding="async">
+          <span class="spots">CAPACITY UPDATING</span><p class="eyebrow">01 / FIGHTING</p><h3>TEKKEN 3</h3><p>Classic arcade combat. Choose your fighter and enter the arena.</p><button data-open="login" type="button">REGISTER NOW <span>↗</span></button>
+        </article>
+        <article class="game-card game-fifa">
+          <img class="game-bg" src="/assets/images/games/fifa.jpg" alt="FIFA arena artwork" loading="lazy" decoding="async">
+          <span class="spots">CAPACITY UPDATING</span><p class="eyebrow">02 / FOOTBALL</p><h3>FIFA</h3><p>The beautiful game. Edition will be announced soon.</p><button data-open="login" type="button">REGISTER NOW <span>↗</span></button>
+        </article>
+        <article class="game-card game-pubg">
+          <img class="game-bg" src="/assets/images/games/pubg.jpg" alt="PUBG Mobile arena artwork" loading="lazy" decoding="async">
+          <span class="spots">CAPACITY UPDATING</span><p class="eyebrow">03 / BATTLE ROYALE</p><h3>PUBG<br>MOBILE</h3><p>Squad up and outlast the competition.</p><button data-open="login" type="button">REGISTER NOW <span>↗</span></button>
+        </article>
+      </div>
+      <div class="chapter-foot"><span>SELECT YOUR ARENA</span><span>SCROLL TO EXPLORE <b>↓</b></span></div>
+    </section>
+
+    <section class="how chapter" id="how" aria-labelledby="how-title">
+      <div class="how-title"><p class="eyebrow"><span class="eyebrow-mark"></span> SIMPLE PLAYBOOK / 02</p><h2 id="how-title">FOUR STEPS.<br><em>ALL IN.</em></h2><p class="how-lede">From player profile to the final score, your route into the arena is clear.</p></div>
+      <div class="steps">
+        <article><b>01</b><span class="step-symbol">＋</span><h3>Sign up</h3><p>Create your player profile with your student details.</p></article>
+        <article><b>02</b><span class="step-symbol">↗</span><h3>Pick a game</h3><p>Choose one arena or register for all three.</p></article>
+        <article><b>03</b><span class="step-symbol">◷</span><h3>Get placed</h3><p>Check your profile for an assigned match time.</p></article>
+        <article><b>04</b><span class="step-symbol">✦</span><h3>Play & win</h3><p>Show up, bring your best, and make it count.</p></article>
+      </div>
+      <div class="step-line" aria-hidden="true"><i></i></div>
+    </section>
+
+    <section class="schedule chapter" id="schedule" aria-labelledby="schedule-title">
+      <div class="section-head">
+        <div><p class="eyebrow"><span class="eyebrow-mark"></span> MATCH CONTROL / 03</p><h2 id="schedule-title">LIVE <em>SCHEDULE.</em></h2></div>
+        <span class="live-pill"><i></i> LIVE UPDATES</span>
+      </div>
+      <div class="schedule-labels" aria-hidden="true"><span>LOCAL TIME</span><span>MATCH</span><span>STATUS</span><span>COUNTDOWN</span></div>
+      <div id="schedule-list" class="schedule-list"><p class="empty">Match times will appear here once announced.</p></div>
+      <p class="schedule-note">Match timing is set by the event team and may overlap across arenas.</p>
+    </section>
+
+    <section class="winners chapter" id="winners" aria-labelledby="winners-title">
+      <div class="section-head">
+        <div><p class="eyebrow"><span class="eyebrow-mark"></span> THE ONES TO BEAT / 04</p><h2 id="winners-title">HALL OF<br><em>WINNERS.</em></h2></div>
+        <p class="section-copy">Every match writes a story.<br>Here are the names that made it.</p>
+      </div>
+      <div id="winner-list" class="winner-list"><div class="winner-placeholder">WINNERS WILL BE CROWNED HERE <span>✦</span></div></div>
+    </section>
+
+    <section class="cta chapter" id="join" aria-labelledby="join-title">
+      <p class="eyebrow"><span class="eyebrow-mark"></span> YOUR CAMPUS. YOUR GAME.</p>
+      <h2 id="join-title">THE NEXT NAME<br>COULD BE <em>YOURS.</em></h2>
+      <p class="cta-date">18 NOVEMBER 2026 <span>·</span> COMSATS VEHARI</p>
+      <button class="primary large" data-open="signup" type="button">CLAIM YOUR SPOT <span>↗</span></button>
+      <footer><span>V SPARK <i>✦</i> E-GAMING ARENA</span><span id="footer-university">COMSATS UNIVERSITY ISLAMABAD · VEHARI CAMPUS</span><span>BUILT FOR THE BOLD <i>↗</i></span></footer>
+    </section>
+  </main>
+
+  <dialog id="auth-dialog" class="site-dialog">
+    <button class="close" aria-label="Close">×</button>
+    <div class="auth-switch"><button data-mode="login" class="selected" type="button">LOG IN</button><button data-mode="signup" type="button">CREATE ACCOUNT</button></div>
+    <form id="auth-form"><p class="eyebrow">PLAYER ACCESS</p><h2 id="auth-title">WELCOME BACK</h2><div id="auth-fields"></div><p class="form-msg" id="form-msg" aria-live="polite"></p><button class="primary auth-submit" type="submit">ENTER THE ARENA <span>↗</span></button></form>
+  </dialog>
+
+  <dialog id="dashboard-dialog" class="site-dialog profile-dialog">
+    <button class="close" aria-label="Close">×</button><p class="eyebrow">PLAYER PROFILE</p><h2>MY PROFILE</h2><div id="profile-summary" class="profile-summary"></div><p class="eyebrow registrations-heading">MY REGISTRATIONS</p><div id="my-registrations"></div><button class="outline" id="logout" type="button">LOG OUT</button>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

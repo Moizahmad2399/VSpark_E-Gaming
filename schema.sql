@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS students (
   email TEXT NOT NULL UNIQUE CHECK (email = lower(email)),
   cnic CHAR(13) NOT NULL UNIQUE CHECK (cnic ~ '^[0-9]{13}$'),
   department TEXT NOT NULL,
+  profile_image BYTEA,
+  profile_image_type TEXT CHECK (profile_image_type IN ('image/jpeg','image/png','image/webp')),
   password_hash TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -65,3 +67,6 @@ CREATE INDEX IF NOT EXISTS registrations_student_idx ON registrations(student_id
 CREATE INDEX IF NOT EXISTS matches_schedule_idx ON matches(starts_at, ends_at, status);
 CREATE INDEX IF NOT EXISTS matches_game_idx ON matches(game_id);
 CREATE INDEX IF NOT EXISTS match_players_student_idx ON match_players(student_id);
+
+ALTER TABLE students ADD COLUMN IF NOT EXISTS profile_image BYTEA;
+ALTER TABLE students ADD COLUMN IF NOT EXISTS profile_image_type TEXT;

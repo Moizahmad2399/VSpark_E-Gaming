@@ -22,6 +22,10 @@ Open `http://localhost:3000`; admin tools are at `http://localhost:3000/admin`. 
 
 The local development database is convenient for this computer. Production and shared deployments should use a regular PostgreSQL service such as Supabase, configured through `DATABASE_URL`.
 
+## Student profile photos
+
+Students can upload a JPG, PNG, or WebP profile photo (maximum 2 MB) from **My Profile**. Images are validated by file signature and stored as PostgreSQL `BYTEA` data. The student profile uses a private authenticated image route; the public winners board only serves the photo of a completed-match winner. The columns are included in `schema.sql`; when updating an existing database, run the latest `schema.sql` in the Supabase SQL editor before starting the updated app.
+
 ## Render deploy
 
 Create a Render Web Service from this repository, set the build command to `npm install` and start command to `npm start`. Add `DATABASE_URL`, `SESSION_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `NODE_ENV=production` under the service's environment settings. Run the schema in Supabase and run `npm run seed` once against the production database (for example, from the Render shell). Render terminates HTTPS; production cookies are marked Secure.
