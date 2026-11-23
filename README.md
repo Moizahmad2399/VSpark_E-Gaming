@@ -1,5 +1,24 @@
 # V Spark – E-Gaming Arena
 
+Live website: [v-spark-e-gaming-2t32.vercel.app](https://v-spark-e-gaming-2t32.vercel.app/)
+
+V Spark is a university e-gaming registration and competition management platform for COMSATS University Islamabad, Vehari Campus. Students can create accounts, register for games, view their match assignments, and see the public schedule and winners. Admins manage games, capacity, matches, results, registrations, event settings, and administrator accounts.
+
+## Languages and technologies
+
+- **JavaScript** — Express server, API routes, authentication, admin workflows, and browser interactions
+- **HTML5** — public event site, student profile, authentication dialogs, and admin dashboard markup
+- **CSS3** — responsive layouts, futuristic visual system, neon theme, accessibility states, and responsive mobile styling
+- **SQL / PostgreSQL** — schema, constraints, indexes, registrations, matches, winners, and event settings
+- **Node.js** — server runtime and deployment entry point
+- **Express** — backend web server and REST-style API
+- **Supabase Postgres** — hosted production database
+- **`pg`** — server-side PostgreSQL connection pool
+- **bcrypt** — password hashing for students and admins
+- **Express Session + connect-pg-simple** — secure server-side sessions stored in PostgreSQL
+- **Helmet** — HTTP security headers and Content Security Policy
+- **GSAP + ScrollTrigger** — scroll-linked public-site animation and parallax effects
+- **Vercel** — production hosting for the Express application and static frontend assets
 Node.js + Express event-registration site backed by Supabase Postgres through `pg`. The browser receives only public event/game data; database access and authentication stay on the server.
 
 ## Supabase setup
