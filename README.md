@@ -1,79 +1,149 @@
 # V Spark – E-Gaming Arena
 
-Live website: [v-spark-e-gaming-2t32.vercel.app](https://v-spark-e-gaming-2t32.vercel.app/)
+## Live website
 
-V Spark is a university e-gaming registration and competition management platform for COMSATS University Islamabad, Vehari Campus. Students can create accounts, register for games, view their match assignments, and see the public schedule and winners. Admins manage games, capacity, matches, results, registrations, event settings, and administrator accounts.
+https://v-spark-e-gaming-2t32.vercel.app/
 
-## Languages and technologies
+## What is V Spark?
 
-- **JavaScript** — Express server, API routes, authentication, admin workflows, and browser interactions
-- **HTML5** — public event site, student profile, authentication dialogs, and admin dashboard markup
-- **CSS3** — responsive layouts, futuristic visual system, neon theme, accessibility states, and responsive mobile styling
-- **SQL / PostgreSQL** — schema, constraints, indexes, registrations, matches, winners, and event settings
-- **Node.js** — server runtime and deployment entry point
-- **Express** — backend web server and REST-style API
-- **Supabase Postgres** — hosted production database
-- **`pg`** — server-side PostgreSQL connection pool
-- **bcrypt** — password hashing for students and admins
-- **Express Session + connect-pg-simple** — secure server-side sessions stored in PostgreSQL
-- **Helmet** — HTTP security headers and Content Security Policy
-- **GSAP + ScrollTrigger** — scroll-linked public-site animation and parallax effects
-- **Vercel** — production hosting for the Express application and static frontend assets
-Node.js + Express event-registration site backed by Supabase Postgres through `pg`. The browser receives only public event/game data; database access and authentication stay on the server.
+V Spark is an online gaming competition website for COMSATS University Islamabad, Vehari Campus.
 
-## Supabase setup
+Students can:
 
-1. Create a Supabase project and copy its Postgres connection string (use the direct or session-pooler URL supported by your deployment).
-2. In the Supabase SQL editor, run `schema.sql`.
-3. Copy `.env.example` to `.env`, then set `DATABASE_URL`, a long random `SESSION_SECRET`, `ADMIN_USERNAME=admin`, and a private `ADMIN_PASSWORD`.
-4. Install dependencies and run `npm run seed`. The seed creates only missing games and hashes the admin password using bcrypt. Re-running it updates that admin's hash.
+- Create an account
+- Register for games
+- View match time and result
+- Cancel an upcoming registration
+- Upload a profile picture
+- See the winners board
 
-## Local run (PowerShell)
+Admins can:
 
-When no real `DATABASE_URL` is set, `npm start` automatically starts a persistent PostgreSQL-compatible local database, applies `schema.sql`, seeds the games and local admin, and runs Express. Its data stays under `data/vspark-postgres` on this computer. This avoids needing a separate database installer for local development. `npm run dev:local` remains available for the same local setup.
+- Manage games and capacity
+- Manage student registrations
+- Create and control matches
+- Add winners and scores
+- Change event date and venue
+- Manage other admin accounts
+
+## Games
+
+- Tekken 3
+- FIFA
+- PUBG Mobile
+
+## Technologies used
+
+- **HTML** – website structure
+- **CSS** – design and responsive layout
+- **JavaScript** – website actions and API communication
+- **Node.js** – backend runtime
+- **Express.js** – backend server and API
+- **PostgreSQL** – database
+- **Supabase** – hosted PostgreSQL database
+- **`pg`** – connects Node.js to PostgreSQL
+- **GSAP and ScrollTrigger** – scroll animations
+- **bcrypt** – password hashing
+- **Helmet** – security headers
+- **Vercel** – website hosting
+- **GitHub** – source code and version control
+
+## Simple architecture
+
+```text
+Student/Admin browser
+        ↓
+Express.js backend on Vercel
+        ↓
+PostgreSQL database on Supabase
+```
+
+The browser talks to the Express backend. The backend talks to Supabase. Database passwords are never sent to the browser.
+
+## Security used
+
+- Passwords are stored as bcrypt hashes.
+- SQL queries are parameterized to help prevent SQL injection.
+- Students and admins have separate permissions.
+- Admin routes are protected on the server.
+- Sessions use secure HTTP-only cookies.
+- CSRF protection is enabled for form requests.
+- Login and signup requests are rate limited.
+- Input is validated on the server.
+- Secrets are stored in environment variables, not in GitHub.
+- User text is escaped before being shown in HTML.
+
+## Run locally
+
+Open PowerShell in the project folder:
 
 ```powershell
 npm install
 npm start
 ```
 
-Open `http://localhost:3000`; admin tools are at `http://localhost:3000/admin`. Check `http://localhost:3000/health` for service health. Stop the local app with Ctrl+C. Node.js 20+ is recommended.
+Open:
 
-The local development database is convenient for this computer. Production and shared deployments should use a regular PostgreSQL service such as Supabase, configured through `DATABASE_URL`.
-
-## Student profile photos
-
-Students can upload a JPG, PNG, or WebP profile photo (maximum 2 MB) from **My Profile**. Images are validated by file signature and stored as PostgreSQL `BYTEA` data. The student profile uses a private authenticated image route; the public winners board only serves the photo of a completed-match winner. The columns are included in `schema.sql`; when updating an existing database, run the latest `schema.sql` in the Supabase SQL editor before starting the updated app.
-
-## Deploy to Vercel + Supabase
-
-1. Create a Supabase project. In the project SQL Editor, run the current `schema.sql`.
-2. In Supabase, select **Connect → Transaction pooler** and copy its URI. This is the connection type intended for serverless functions. Keep the database password private.
-3. Import this GitHub repository into Vercel. Vercel detects the exported Express app in `server.js`; keep the project root at the repository root. The `public/` folder is served as static assets, and `cleanUrls` keeps `/admin` working.
-4. In Vercel **Project → Settings → Environment Variables**, add `DATABASE_URL` (the Supabase transaction pooler URI), `SESSION_SECRET` (a long random value), `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `NODE_ENV=production`. Apply them to Production and Preview as needed. Never put the database URL or admin password in frontend code or commit them.
-5. Deploy. Check `<your-vercel-domain>/health` and `<your-vercel-domain>/api/public`.
-6. Seed the admin and games once using the same `DATABASE_URL`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD` in a private local `.env`, then run `npm run seed`. The seed script applies `schema.sql` idempotently before inserting the games and bcrypt-hashed admin. Remove the temporary local `.env` only if you no longer need it; it is gitignored.
-
-For local seeding against Supabase, use the pooler URI exactly as copied from its dashboard. For Vercel, the app uses one `pg` connection per warm function instance to avoid opening excessive database connections.
+- Website: http://localhost:3000
+- Admin panel: http://localhost:3000/admin
+- Health check: http://localhost:3000/health
 
 ## Environment variables
 
-`DATABASE_URL` is required for Supabase/production and optional for local `npm start` (without it, the local persistent database starts automatically). `SESSION_SECRET` is required for deployment, `ADMIN_USERNAME` and `ADMIN_PASSWORD` are required for seeding, `PORT` is supplied by the host, and `NODE_ENV` controls production settings.
+Create a private `.env` file:
 
-## Tests
-
-```powershell
-npm test
+```env
+DATABASE_URL=your_supabase_database_url
+SESSION_SECRET=your_private_session_secret
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your_admin_password
+NODE_ENV=production
 ```
 
-The automated suite checks the signup validators, admin role middleware, and the transaction/overlap SQL contracts. A configured Supabase instance is still needed for end-to-end database concurrency testing. Keep any `.env` file private; it is excluded by `.gitignore`.
+Never upload `.env` to GitHub.
 
-## Supplied images
+## Admin login
 
-- Hero: `public/assets/images/hero/university.jpg`
-- Tekken: `public/assets/images/games/tekken.webp`
-- FIFA: `public/assets/images/games/fifa.jpg`
-- PUBG: `public/assets/images/games/pubg.jpg`
-- Branding: `public/assets/images/brand/`
+- Admin page: https://v-spark-e-gaming-2t32.vercel.app/admin
+- Username: the value of `ADMIN_USERNAME`
+- Password: the value of `ADMIN_PASSWORD`
 
-Replace these files at the same paths to update the artwork. The artwork has been copied as supplied; source JPEGs are not recompressed to WebP by this setup.
+The admin password is not stored in this README. It is private.
+
+## Easy viva questions
+
+**What is the purpose of this project?**
+It manages university gaming registrations, matches, and results online.
+
+**Why did you use PostgreSQL?**
+The project has related data such as students, games, registrations, and matches. PostgreSQL manages these relationships reliably.
+
+**Why did you use Supabase?**
+Supabase gives us a hosted PostgreSQL database that we can use in production.
+
+**Why did you use Express.js?**
+Express makes it easy to create backend routes and APIs with Node.js.
+
+**How are passwords protected?**
+Passwords are hashed with bcrypt before they are stored.
+
+**How is the admin panel protected?**
+The server checks the user role before allowing access to admin routes.
+
+**How do you stop game overbooking?**
+The server uses a database transaction and row lock while checking game capacity.
+
+**Where is the website deployed?**
+The website is deployed on Vercel and the database is hosted on Supabase.
+
+## Main files
+
+- `server.js` – Express backend and API routes
+- `schema.sql` – PostgreSQL database structure
+- `scripts/seed.js` – adds games and the first admin
+- `public/index.html` – student website
+- `public/admin.html` – admin panel
+- `public/app.js` – student-side JavaScript
+- `public/admin.js` – admin-side JavaScript
+- `public/styles.css` – student website design
+- `public/admin.css` – admin panel design
